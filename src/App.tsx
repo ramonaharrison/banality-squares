@@ -1,6 +1,7 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import Board from "./components/Board";
 
 function App() {
   return (
@@ -14,9 +15,8 @@ function App() {
           className="App-link"
           href="https://reactjs.org"
           target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
+          rel="noopener noreferrer">
+          {Board()}
         </a>
       </header>
     </div>
