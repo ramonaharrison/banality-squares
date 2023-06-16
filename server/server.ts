@@ -38,8 +38,8 @@ var root = {
   },
   start: () => {
     let oldState = new GameState()
-    let thing = oldState.game.board.tiles.map((tile)=>{ new Tile(tile.isSelected, null)})
-    return new GameState(new Board())
+    let tiles: Tile[] = oldState.game.board.tiles.map<Tile>((tile)=> new Tile(tile.isSelected, null))
+    return new GameState(new Game(oldState.game.guessesRemaining,  oldState.game.fruits, new Board(tiles)));
   }
 }
 
