@@ -1,11 +1,15 @@
-import Game from "./Game"
+import { Game, Tile, Board } from "./Game"
 
 var express = require("express")
 var { graphqlHTTP } = require("express-graphql")
 var { buildSchema } = require("graphql")
 
 class GameState {
-  game: Game = new Game(8, 0)
+  game: Game;
+
+  constructor(game: Game = new Game(8, 0)) {
+    this.game = game;
+  } 
 }
 
 // Construct a schema, using GraphQL schema language
@@ -18,6 +22,13 @@ var schema = buildSchema(`
     start: GameState
     move(gameId: String, x: Int, y: Int): GameState
   }
+  type GameState {
+    id: String
+    game: Game
+  }
+  type Game {
+    
+  }
 `)
 
 // The root provides a resolver function for each API endpoint
@@ -26,7 +37,9 @@ var root = {
     return "Hello DAVID!"
   },
   start: () => {
-    return GameState
+    let oldState = new GameState()
+    let thing = oldState.game.board.tiles.map((tile)=>{ new Tile(tile.isSelected, null)})
+    return new GameState(new Board())
   }
 }
 

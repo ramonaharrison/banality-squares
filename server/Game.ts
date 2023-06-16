@@ -1,11 +1,12 @@
-class Game {
-  guessesRemaining: number = 8;
-  fruits: number = 0;
-  board: Board = new Board();
+export class Game {
+  guessesRemaining: number;
+  fruits: number;
+  board: Board;
 
-  constructor(guessesRemaining: number, fruits: number) {
+  constructor(guessesRemaining: number = 8, fruits: number = 0, board: Board = new Board()) {
     this.guessesRemaining = guessesRemaining;
     this.fruits = fruits;
+    this.board = board;
   }
 
   getPrize(): Prize {
@@ -17,13 +18,22 @@ class Game {
   }
 }
 
-class Board {
-  tiles: Tile[][] = [[], [], []];
+export class Board {
+  tiles: Tile[];
+
+  constructor(tiles: Tile[] = [new Tile(), new Tile(), new Tile(), new Tile(), new Tile(), new Tile(), new Tile(), new Tile(), new Tile()]) {
+    this.tiles = tiles;
+  }
 }
 
-class Tile {
+export class Tile {
   isSelected: boolean = false;
-  value: Fruit | Junk = randomFruitOrJunk();
+  value?: Fruit | Junk | null = null;
+  
+  constructor(isSelected: Boolean = false, value:  Fruit | Junk | null = null){
+    isSelected = false;
+    value = value;
+  }
 }
 
 class Prize {}
@@ -53,7 +63,7 @@ for (let i = 0; i < 10; i++) {
   let thing = randomFruitOrJunk();
   console.log(`fruit or junk: ${thing.name}`);
 }
-export default Game;
+//export default Game;
 
 /*
 Game:
