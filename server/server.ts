@@ -1,4 +1,4 @@
-import { Game, Tile, Board } from "./Game"
+import { Game, Tile, Board, Fruit, Junk } from "./Game"
 
 var express = require("express")
 var { graphqlHTTP } = require("express-graphql")
@@ -20,16 +20,36 @@ var schema = buildSchema(`
   }
   type Mutation {
     start: GameState
-    move(gameId: String, x: Int, y: Int): GameState
+    move(gameId: String, position: Int): GameState
   }
   type GameState {
     id: String
     game: Game
   }
   type Game {
-    
+    guessesRemaining: Int
+    fruits: Int
+    board: Board
+  }
+  type Board {
+    tiles: [Tile!]!
+  }
+  type Tile {
+    isSelected: Boolean
+    value: Value
+  }
+  union Value = Fruit | Junk
+  type Fruit {
+    name: String
+  }
+  type Junk {
+    name: String
   }
 `)
+
+var gameState = new GameState()
+console.log(gameState)
+console.log(gameState.game.board.tiles[6])
 
 // The root provides a resolver function for each API endpoint
 var root = {
@@ -37,9 +57,16 @@ var root = {
     return "Hello DAVID!"
   },
   start: () => {
-    let oldState = new GameState()
-    let tiles: Tile[] = oldState.game.board.tiles.map<Tile>((tile)=> new Tile(tile.isSelected, null))
-    return new GameState(new Game(oldState.game.guessesRemaining,  oldState.game.fruits, new Board(tiles)));
+    return gameState
+  },
+
+  move: (gameId: string, position: number) => {
+    console.log(position)
+    console.log(gameState.game.board.tiles[position])
+    gameState.game.board.tiles[position].isSelected = true
+    gameState.game.board.tiles[position].value = new Fruit()
+    gameState = new GameState(new Game(gameState.game.guessesRemaining,  gameState.game.fruits, new Board(gameState.game.board.tiles)));
+    return gameState
   }
 }
 

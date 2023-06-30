@@ -48,11 +48,11 @@ function randomFruitOrJunk(): Fruit | Junk {
   return thing;
 }
 
-class Fruit {
+export class Fruit {
   name: string = "fruit";
 }
 
-class Junk {
+export class Junk {
   name: string = "junk";
 }
 
