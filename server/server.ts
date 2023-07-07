@@ -1,15 +1,15 @@
-import { Game, Tile, Board, Fruit, Junk } from "./Game"
+import { Game, Tile, Board, Fruit, Junk } from "./Game";
 
-var express = require("express")
-var { graphqlHTTP } = require("express-graphql")
-var { buildSchema } = require("graphql")
+var express = require("express");
+var { graphqlHTTP } = require("express-graphql");
+var { buildSchema } = require("graphql");
 
 class GameState {
   game: Game;
 
   constructor(game: Game = new Game(8, 0)) {
     this.game = game;
-  } 
+  }
 }
 
 // Construct a schema, using GraphQL schema language
@@ -38,39 +38,56 @@ var schema = buildSchema(`
     isSelected: Boolean
     value: Value
   }
-  union Value = Fruit | Junk
-  type Fruit {
-    name: String
+  interface Value {
+    name: String!
   }
-  type Junk {
-    name: String
+  type Fruit implements Value {
+    name: String!
   }
-`)
+  type Junk implements Value {
+    name: String!
+  }
+`);
 
-var gameState = new GameState()
-console.log(gameState)
-console.log(gameState.game.board.tiles[6])
+var gameState = new GameState();
 
 // The root provides a resolver function for each API endpoint
 var root = {
   hello: () => {
-    return "Hello DAVID!"
+    return "Hello DAVID!";
   },
   start: () => {
-    return gameState
+    return gameState;
   },
 
-  move: (gameId: string, position: number) => {
-    console.log(position)
-    console.log(gameState.game.board.tiles[position])
-    gameState.game.board.tiles[position].isSelected = true
-    gameState.game.board.tiles[position].value = new Fruit()
-    gameState = new GameState(new Game(gameState.game.guessesRemaining,  gameState.game.fruits, new Board(gameState.game.board.tiles)));
-    return gameState
-  }
-}
+  Value: {
+    __resolveType: (obj, contextValue, info) => {
+      if (obj.name === "fruit") {
+        return "Fruit";
+      } else {
+        return "Junk";
+      }
+    },
+  },
+  move: ({ gameId, position }: { gameId: string; position: number }) => {
+    {
+      gameState.game.board.tiles[position].isSelected = true;
+      const newLocal = new Fruit();
+      console.log(`fruit = ${newLocal.name}`);
+      gameState.game.board.tiles[position].value = newLocal;
+      gameState = new GameState(
+        new Game(
+          gameState.game.guessesRemaining,
+          gameState.game.fruits,
+          new Board(gameState.game.board.tiles)
+        )
+      );
+      return gameState;
+    }
+  },
+};
 
-var app = express()
+var app = express();
 app.use(
   "/graphql",
   graphqlHTTP({
@@ -78,6 +95,6 @@ app.use(
     rootValue: root,
     graphiql: true,
   })
-)
-app.listen(4000)
-console.log("Running a GraphQL API server at http://localhost:4000/graphql")
+);
+app.listen(4000);
+console.log("Running a GraphQL API server at http://localhost:4000/graphql");

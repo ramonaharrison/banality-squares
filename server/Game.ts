@@ -28,9 +28,9 @@ export class Board {
 
 export class Tile {
   isSelected: boolean = false;
-  value?: Fruit | Junk | null = null;
+  value?: Value | null = null;
   
-  constructor(isSelected: Boolean = false, value:  Fruit | Junk | null = null){
+  constructor(isSelected: Boolean = false, value:  Value | null = null){
     isSelected = false;
     value = value;
   }
@@ -38,8 +38,8 @@ export class Tile {
 
 class Prize {}
 
-function randomFruitOrJunk(): Fruit | Junk {
-  let thing: Fruit | Junk;
+function randomFruitOrJunk(): Value {
+  let thing: Value;
   if (Math.floor(Math.random() * 10) % 2 === 0) {
     thing = new Fruit();
   } else {
@@ -48,32 +48,14 @@ function randomFruitOrJunk(): Fruit | Junk {
   return thing;
 }
 
-export class Fruit {
+export class Fruit implements Value {
   name: string = "fruit";
 }
 
-export class Junk {
+export class Junk implements Value {
   name: string = "junk";
 }
 
-let game = new Game(8, 0);
-
-console.log(`fruit count ${game.fruits}`);
-for (let i = 0; i < 10; i++) {
-  let thing = randomFruitOrJunk();
-  console.log(`fruit or junk: ${thing.name}`);
+export interface Value {
+  name: string
 }
-//export default Game;
-
-/*
-Game:
-- guessesRemaining: Number
-- fruits: Number
-- prize: Prize
-- board: Board
-Board:
-- array: Tile[][]
-Tile:
-- isSelected
-- value: Fruit | Junk
-*/

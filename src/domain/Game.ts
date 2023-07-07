@@ -45,25 +45,3 @@ class Fruit {
 class Junk {
   name: string = "junk";
 }
-
-let game = new Game(8, 0);
-
-console.log(`fruit count ${game.fruits}`);
-for (let i = 0; i < 10; i++) {
-  let thing = randomFruitOrJunk();
-  console.log(`fruit or junk: ${thing.name}`);
-}
-export default Game;
-
-/*
-Game:
-- guessesRemaining: Number
-- fruits: Number
-- prize: Prize
-- board: Board
-Board:
-- array: Tile[][]
-Tile:
-- isSelected
-- value: Fruit | Junk
-*/
