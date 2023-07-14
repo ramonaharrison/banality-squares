@@ -1,4 +1,4 @@
-import { Game, Tile, Board, Fruit, Junk } from "./Game";
+import { Game, Tile, Board, Fruit, Junk, randomFruitOrJunk} from "./Game";
 
 var express = require("express");
 var { graphqlHTTP } = require("express-graphql");
@@ -7,7 +7,7 @@ var { buildSchema } = require("graphql");
 class GameState {
   game: Game;
 
-  constructor(game: Game = new Game(8, 0)) {
+  constructor(game: Game = new Game(8)) {
     this.game = game;
   }
 }
@@ -38,13 +38,12 @@ var schema = buildSchema(`
     isSelected: Boolean
     value: Value
   }
-  interface Value {
+  union Value = Fruit | Junk
+
+  type Fruit {
     name: String!
   }
-  type Fruit implements Value {
-    name: String!
-  }
-  type Junk implements Value {
+  type Junk{
     name: String!
   }
 `);
@@ -60,25 +59,15 @@ var root = {
     return gameState;
   },
 
-  Value: {
-    __resolveType: (obj, contextValue, info) => {
-      if (obj.name === "fruit") {
-        return "Fruit";
-      } else {
-        return "Junk";
-      }
-    },
-  },
   move: ({ gameId, position }: { gameId: string; position: number }) => {
     {
       gameState.game.board.tiles[position].isSelected = true;
-      const newLocal = new Fruit();
+      const newLocal = randomFruitOrJunk();
       console.log(`fruit = ${newLocal.name}`);
       gameState.game.board.tiles[position].value = newLocal;
       gameState = new GameState(
         new Game(
           gameState.game.guessesRemaining,
-          gameState.game.fruits,
           new Board(gameState.game.board.tiles)
         )
       );

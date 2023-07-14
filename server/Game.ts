@@ -1,11 +1,10 @@
 export class Game {
   guessesRemaining: number;
-  fruits: number;
+
   board: Board;
 
-  constructor(guessesRemaining: number = 8, fruits: number = 0, board: Board = new Board()) {
+  constructor(guessesRemaining: number = 8, board: Board = new Board()) {
     this.guessesRemaining = guessesRemaining;
-    this.fruits = fruits;
     this.board = board;
   }
 
@@ -13,9 +12,6 @@ export class Game {
     return new Prize();
   }
 
-  set setFruits(number: number) {
-    this.fruits = number;
-  }
 }
 
 export class Board {
@@ -38,22 +34,28 @@ export class Tile {
 
 class Prize {}
 
-function randomFruitOrJunk(): Value {
-  let thing: Value;
+export function randomFruitOrJunk(): Value {
+  let value: Value;
   if (Math.floor(Math.random() * 10) % 2 === 0) {
-    thing = new Fruit();
+    value = new Fruit();
   } else {
-    thing = new Junk();
+    value = new Junk();
   }
-  return thing;
+  return value;
 }
 
 export class Fruit implements Value {
   name: string = "fruit";
+  get __typename() {
+    return 'Fruit'
+  }
 }
 
 export class Junk implements Value {
   name: string = "junk";
+  get __typename() {
+    return 'Junk'
+  }
 }
 
 export interface Value {
